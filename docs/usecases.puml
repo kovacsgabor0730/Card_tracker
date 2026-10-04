@@ -1,0 +1,66 @@
+@startuml usecase_diagram
+left to right direction
+skinparam packageStyle rectangle
+skinparam shadowing false
+skinparam actor {
+  BackgroundColor #E1F5FE
+  BorderColor #0288D1
+}
+skinparam usecase {
+  BackgroundColor #FFFFFF
+  BorderColor #37474F
+}
+
+actor "IoT Kapu / Szenzor" as iot << System >>
+actor "Operátor / Őr" as operator << User >>
+actor "Adminisztrátor" as admin << User >>
+
+rectangle "Kártyamozgás-követő Rendszer" {
+
+  package "Hitelesítés & Profil" {
+    usecase "UC-01: Bejelentkezés (JWT)" as UC1
+    usecase "UC-02: Profiladatok lekérdezése" as UC2
+  }
+
+  package "Kártya & Entitás Kezelés" {
+    usecase "UC-03: Kártya regisztrációja" as UC3
+    usecase "UC-04: Kártyák státuszának és helyének lekérdezése" as UC4
+    usecase "UC-05: Kártya letiltása / Módosítása" as UC5
+  }
+
+  package "Eseményfeldolgozás & Anomália" {
+    usecase "UC-06: Kártyamozgás (esemény) rögzítése" as UC6
+    usecase "UC-07: Anomália automatikus ellenőrzése" as UC7
+    usecase "UC-08: Anomália riasztás megtekintése" as UC8
+  }
+
+  package "Riportok & Statisztika" {
+    usecase "UC-09: Aggregált zónastatisztikák" as UC9
+    usecase "UC-10: Felhasználói aktivitási riportok" as UC10
+  }
+}
+
+' Kapcsolatok - Hitelesítés
+operator --> UC1
+admin --> UC1
+operator --> UC2
+admin --> UC2
+
+' Kapcsolatok - Kártyakezelés
+admin --> UC3
+operator --> UC4
+admin --> UC4
+admin --> UC5
+
+' Kapcsolatok - Események & Anomália
+iot --> UC6
+operator --> UC6
+UC6 .> UC7 : <<include>>
+operator --> UC8
+admin --> UC8
+
+' Kapcsolatok - Statisztikák
+admin --> UC9
+admin --> UC10
+
+@enduml
